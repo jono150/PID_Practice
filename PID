@@ -1,0 +1,46 @@
+class PID{
+  ArrayList<PVector> cord = new ArrayList<PVector>();
+  int x = 10;
+  int y;
+  float target, p, i, d, deriv, reset, prevError, speed, error, current;
+  PID(float target, float p, float i, float d, float current){
+    this.target = target;
+    this.p = p;
+    this.i = i;
+    this.d = d;
+    this. current = current;
+    prevError = target - current;
+    speed = 5;
+  }
+  
+  void tune(){
+    error = target - current;
+    deriv = d*(error - prevError);
+    speed = p*error + reset + deriv;
+    reset += i*error;
+    prevError = error;
+  }
+  
+  
+  void graph(){
+    fill(255);
+    rect(10, 60, 200, 100);
+    line(10, int(target/6+60), 210, int(target/6+60));
+    if(x+10 <= 200){
+      y = int(current/6+60);
+      cord.add(new PVector(x, y));
+    }
+    for(PVector v : cord){
+      point(v.x + 10, v.y);
+    }
+    if(x+10 <= 200){
+      y = int(current/6+60);
+      cord.add(new PVector(x, y));
+    }
+    for(PVector v : cord){
+      point(v.x + 10, v.y);
+    }
+    x++;
+  }
+  
+}
