@@ -1,0 +1,15 @@
+class motor{
+  motor(){
+    
+  }
+  float mapp(float start, float a1, float a2, float b1, float b2){
+    start = (b2 - b1)/(a2 - a1)*(start-a1) + b1;
+    if(start > b2){
+      start = b2; 
+    } else if(start < b1){
+      start = b1;
+    }
+    return start;
+  }
+  
+}
