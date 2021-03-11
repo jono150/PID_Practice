@@ -1,0 +1,64 @@
+int y = 580;
+float target = 300;
+float maxSpeed = 10;
+float expectedValueRange = 30000;
+float acc = 4;
+float velo = 0;
+float kp = 1000; 
+float ki = 2.5; 
+float kd = 10000;
+float alpha = .4;
+float filter = 0;
+float lastAv = 0;
+PID p;
+motor motor;
+void setup(){
+  size(600, 600);
+  background(255);
+  p = new PID(target, kp, ki, kd, y);
+  //p = new PID(target, .0005, .0, .0, y);
+  motor = new motor();
+}
+
+void draw(){
+  fill(0);
+  background(255);
+  if(abs(p.reset) > expectedValueRange){
+    if(p.reset > 0){
+      p.reset = expectedValueRange;
+    } else{
+      p.reset = -expectedValueRange;
+    }
+  }
+  p.tune();
+  println(p.reset);
+  //y += p.speed;
+  //y += velo; 
+  println(p.speed + " = PID(" + p.p*p.error + ", " + p.reset + ", " + p.deriv + ", " + p.current + ")");
+  println("speed: " + motor.mapp(p.speed, -expectedValueRange, 0, -maxSpeed, 0));
+  p.speed = motor.mapp(p.speed, -expectedValueRange, 0, -maxSpeed, 0);
+  filter = (p.speed*alpha) + lastAv * (1 - alpha);
+  lastAv = filter;
+  //velo += p.speed;
+  velo += filter;
+  velo += acc;
+  y += velo;
+  p.current = y;
+  println("velo: " + velo);
+  println();
+  text("current: " + y, 30, 30);
+  text("reset: " + p.reset, 30, 40);
+  text("u: " + p.speed, 30, 50);
+  ellipse(width/2, y, 40, 40);
+  line(0, p.target, width, p.target);
+  p.graph();
+  
+}
+
+void mousePressed(){
+  y = mouseY;
+  p.reset = 0;
+  p.cord.clear();
+  p.x = 10;
+  velo = 0;
+}
